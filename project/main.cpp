@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-// rafael github test
+// rafael repo test
 
 /**************************
  * Function Declarations
