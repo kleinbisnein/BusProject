@@ -20,6 +20,7 @@ WPARAM wParam, LPARAM lParam);
 void EnableOpenGL (HWND hWnd, HDC *hDC, HGLRC *hRC);
 void DisableOpenGL (HWND hWnd, HDC hDC, HGLRC hRC);
 void MakeLine(float a, float b, float x, float y);
+void MakePoint(float a, float b);
 
 
 
@@ -100,14 +101,16 @@ int WINAPI WinMain (HINSTANCE hInstance,
             
             MakeLine(-.87, -.5, 0.0, .99);
             
+            MakePoint(0.0,.99);
+            MakePoint(0.87,-.5);
+            MakePoint(-0.87,-.5);
             
             
-            
-            glBegin (GL_POINTS);
-            glColor3f (1.0f, 1.0f, 0.0f);  glVertex2f (0.0, .99);
-            glColor3f (1.0f, 1.0f, 0.0f);   glVertex2f (0.87f, -0.5f);
-            glColor3f (1.0f, 1.0f, 0.0f);   glVertex2f (-0.87f, -0.5f);
-            glEnd ();
+            //glBegin (GL_POINTS);
+            //glColor3f (1.0f, 1.0f, 0.0f);  glVertex2f (0.0, .99);
+            //glColor3f (1.0f, 1.0f, 0.0f);   glVertex2f (0.87f, -0.5f);
+            //glColor3f (1.0f, 1.0f, 0.0f);   glVertex2f (-0.87f, -0.5f);
+            //glEnd ();
             
             glPopMatrix ();
 
@@ -219,4 +222,10 @@ void MakeLine(float a, float b, float x, float y)
             glEnd();
 }
 
-
+void MakePoint(float a, float b)
+{
+	glBegin(GL_POINTS);
+            glColor3f (1.0f, 1.0f, 0.0f);  glVertex2f (a, b);
+           
+            glEnd();
+}
