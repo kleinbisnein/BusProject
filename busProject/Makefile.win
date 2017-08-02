@@ -4,8 +4,8 @@
 CPP      = g++.exe
 CC       = gcc.exe
 WINDRES  = windres.exe
-OBJ      = main.o ../project1/busProj.o
-LINKOBJ  = main.o ../project1/busProj.o
+OBJ      = main.o
+LINKOBJ  = main.o
 LIBS     = -L"C:/Users/Public/Downloads/Dev-Cpp 5.11 TDM-GCC x64 4.9.2 Portable/Dev-Cpp/MinGW64/lib" -L"C:/Users/Public/Downloads/Dev-Cpp 5.11 TDM-GCC x64 4.9.2 Portable/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib" -static-libgcc -mwindows -lopengl32
 INCS     = -I"C:/Users/Public/Downloads/Dev-Cpp 5.11 TDM-GCC x64 4.9.2 Portable/Dev-Cpp/MinGW64/include" -I"C:/Users/Public/Downloads/Dev-Cpp 5.11 TDM-GCC x64 4.9.2 Portable/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Users/Public/Downloads/Dev-Cpp 5.11 TDM-GCC x64 4.9.2 Portable/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include"
 CXXINCS  = -I"C:/Users/Public/Downloads/Dev-Cpp 5.11 TDM-GCC x64 4.9.2 Portable/Dev-Cpp/MinGW64/include" -I"C:/Users/Public/Downloads/Dev-Cpp 5.11 TDM-GCC x64 4.9.2 Portable/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Users/Public/Downloads/Dev-Cpp 5.11 TDM-GCC x64 4.9.2 Portable/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"C:/Users/Public/Downloads/Dev-Cpp 5.11 TDM-GCC x64 4.9.2 Portable/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++"
@@ -26,6 +26,3 @@ $(BIN): $(OBJ)
 
 main.o: main.cpp
 	$(CPP) -c main.cpp -o main.o $(CXXFLAGS)
-
-../project1/busProj.o: ../project1/busProj.c
-	$(CPP) -c ../project1/busProj.c -o ../project1/busProj.o $(CXXFLAGS)

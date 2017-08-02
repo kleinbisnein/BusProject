@@ -7,7 +7,7 @@ FILE *pFileBus;
 void processCommandSwitches(int argc, char *argv[], char **ppszBusDataFileName);
 void processStopData();
 
-int main(int argc, char *argv[]) {
+int notmain() {
 	
 	char *pszBusDataFileName = NULL;
 	
