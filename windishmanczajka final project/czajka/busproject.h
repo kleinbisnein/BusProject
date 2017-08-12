@@ -64,7 +64,7 @@ typedef struct
 //stop and route functions
 Location getStops(Location **ppHead,char * buslist);
 Location *searchLoc(Location *p, int stopNum);
-Location *insertLoc(Location *p, Location location);
+void insertLoc(Location **p, Location *location);
 Route *insertRoute(Location *fromLoc, Location *toLoc, int weight);
 Location *allocateLoc(Location location);
 void printNames(Location *p);

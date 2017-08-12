@@ -8,9 +8,35 @@ int main(int argc, char *argv[])
     Location    *pHead = NULL;         	// Points to first node in the list
     char        *pszBusFileName = NULL;	//name of bus routes file
     
-	processCommandSwitches(argc, argv, &pszBusFileName);
+    
+    //make locations
+    int i;
+	for(i = 1; i <= 6; i++) {
+		Location * v = (Location *)malloc(sizeof(Location));
+		v->stopNum = i;
+		v->distance = 999999;
+		v->inGraph = true;
+		v->prevLoc = NULL;
+		v->x = i*75;
+		v->y = i*75;
+		insertLoc(&pHead, v);
+	}
+	
+	//make routes
+	insertRoute(searchLoc(pHead,1),searchLoc(pHead,2),2);
+	insertRoute(searchLoc(pHead,1),searchLoc(pHead,3),4);
+	insertRoute(searchLoc(pHead,2),searchLoc(pHead,3),1);
+	insertRoute(searchLoc(pHead,2),searchLoc(pHead,4),4);
+	insertRoute(searchLoc(pHead,2),searchLoc(pHead,5),2);
+	insertRoute(searchLoc(pHead,3),searchLoc(pHead,5),3);
+	insertRoute(searchLoc(pHead,5),searchLoc(pHead,4),3);
+	insertRoute(searchLoc(pHead,5),searchLoc(pHead,6),2);
+	insertRoute(searchLoc(pHead,4),searchLoc(pHead,6),2);
+	
+	
+	//processCommandSwitches(argc, argv, &pszBusFileName);
     // get the flights and print them
-    getStops(&pHead, pszBusFileName);
+    //getStops(&pHead, pszBusFileName);
     return 0;
 }
 /****************************************************
@@ -23,7 +49,7 @@ Location getStops(Location **ppHead, char *pszBusFileName)
     int i = 0;                      // subscript in flightM    
     int iScanfCnt;                  // returned by sscanf
     FILE *pBusFile;              // Stream Input for Flights data. 
-    Location fromLoc, toLoc;                  // One flight
+    Location *fromLoc, *toLoc;                  // One flight
     int fromArr, fromDep, toArr, toDep;
     int thisRoute, prevRoute;
     double minLat = 10000, maxLat = -10000, minLong = 10000, maxLong = -10000;
@@ -45,28 +71,28 @@ Location getStops(Location **ppHead, char *pszBusFileName)
     	printf("a");
         iScanfCnt = sscanf(szInputBuffer, "%d, %d, %[^,]s, %f, %f, %d, %d"
         	, &thisRoute
-            , &toLoc.stopNum
-            , toLoc.name
-            , &toLoc.y
-            , &toLoc.x
+            , &toLoc->stopNum
+            , toLoc->name
+            , &toLoc->y
+            , &toLoc->x
 			, &toArr
 			, &toDep);
 		printf("b");
 		//Finds min and max long/lat
-		if(toLoc.x < minLat)
-			minLat = toLoc.x;
-		if(toLoc.x > maxLat)
-			maxLat = toLoc.x;
-		if(toLoc.y < minLong)
-			minLong = toLoc.y;
-		if(toLoc.y > maxLong)
-			maxLong = toLoc.y;
+		if(toLoc->x < minLat)
+			minLat = toLoc->x;
+		if(toLoc->x > maxLat)
+			maxLat = toLoc->x;
+		if(toLoc->y < minLong)
+			minLong = toLoc->y;
+		if(toLoc->y > maxLong)
+			maxLong = toLoc->y;
         printf("c");
         // Insert the location into the LL if the location does not already exist
-        if(searchLoc(pHead, toLoc.stopNum) == NULL)
+        if(searchLoc(pHead, toLoc->stopNum) == NULL)
         {
         	printf("z");
-        	pHead = insertLoc(pHead, toLoc);
+        	insertLoc(&pHead, toLoc);
 		}
         	
         printf("d");
@@ -75,15 +101,15 @@ Location getStops(Location **ppHead, char *pszBusFileName)
 			prevRoute = thisRoute;
         else
         {
-        	printf("%s",searchLoc(pHead,toLoc.stopNum)->name);
-			insertRoute(searchLoc(pHead,fromLoc.stopNum), searchLoc(pHead,toLoc.stopNum), (toArr - fromDep));
+        	printf("%s",searchLoc(pHead,toLoc->stopNum)->name);
+			insertRoute(searchLoc(pHead,fromLoc->stopNum), searchLoc(pHead,toLoc->stopNum), (toArr - fromDep));
 			printf("f");
 		}
         
-        fromLoc.stopNum = toLoc.stopNum;
-        strcpy(fromLoc.name,toLoc.name);
-        fromLoc.y = toLoc.y;
-        fromLoc.x = toLoc.x;
+        fromLoc->stopNum = toLoc->stopNum;
+        strcpy(fromLoc->name,toLoc->name);
+        fromLoc->y = toLoc->y;
+        fromLoc->x = toLoc->x;
         fromArr = toArr;
         fromDep = toDep;
         printf("\n");
@@ -132,7 +158,7 @@ Location * Dijikstra(Location * stops, Location * source, Location * target)
 	Location * prev = target->prevLoc;
 
 	while(prev != NULL){
-		insertLoc(path, *prev);
+		insertLoc(&path, prev);
 		prev = prev->prevLoc;
 	}
 
@@ -196,41 +222,33 @@ Location * findMin(Location * head)
 /****************************************************
 Adds a location to the beginning ofthe LL
 ****************************************************/
-Location *insertLoc(Location *pHead, Location location)
+void insertLoc(Location **pHead, Location *location)
 {
-	Location * pNew;
-    Location * temp;
-	
-	pNew = allocateLoc(location);
-    temp = pHead;
-    
-    if(pHead != NULL)
-    {
-    	pNew->pNext = pHead;
-    	pHead = pNew;
-	}
-	else
-		pHead = pNew;
-
-	return pNew;
+	Location * pNew = (Location *)malloc(sizeof(Location));  //(Vertex_LL *) casts memory from malloc
+	pNew = location;
+	pNew->pNext = *pHead;
+	*pHead = pNew;
 }
 
 /****************************************************
-Adds a location to the beginning ofthe LL
+Makes toLoc and fromLoc point to a new route with
+weight of weight. The routes also point to toLoc and
+fromLoc
 ****************************************************/
 Route *insertRoute(Location *fromLoc, Location *toLoc, int weight)
 {
 	Route * pNew;
     Route * tempFrom;
     Route * tempTo;
-	
+
 	pNew = new Route;
 	pNew->u = fromLoc;
 	pNew->v = toLoc;
-	
+	pNew->weight = weight;
+
     tempFrom = fromLoc->adjacent;
     tempTo = toLoc->adjacent;
-    
+   
     if(fromLoc->adjacent != NULL)
     {
     	pNew->pNext = fromLoc->adjacent;
@@ -246,7 +264,7 @@ Route *insertRoute(Location *fromLoc, Location *toLoc, int weight)
 	}
 	else
 		toLoc->adjacent = pNew;
-
+	
 	return pNew;
 }
 
@@ -293,7 +311,7 @@ void printStops(Location * head)
 	Location *p = head;
 	while(p != NULL)
 	{
-		printf("Location Name: %s\n",p->name);
+		printf("Location Name: %d\n",p->stopNum);
 		p = p->pNext;
 	}
 }
